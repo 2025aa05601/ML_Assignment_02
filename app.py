@@ -71,10 +71,12 @@ model_dict = {
 # --------------------------------------------------
 st.sidebar.markdown("### 🎯 Target Variable")
 
-target_col = st.sidebar.selectbox(
-  "Select Target Column",
-   df.columns
-)
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+    target_col = st.sidebar.selectbox(
+      "Select Target Column",
+       df.columns
+    )
 selected_model = st.sidebar.selectbox(
     "🧠 Choose Classification Model",
     list(model_dict.keys())
@@ -102,7 +104,6 @@ st.markdown("---")
 # --------------------------------------------------
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
-
     st.subheader("🔍 Dataset Preview")
     st.dataframe(df.head(), width=True)
 
