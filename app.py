@@ -99,11 +99,8 @@ if uploaded_file:
     st.markdown(
         f"**Shape:** {df.shape[0]} rows × {df.shape[1]} columns"
         )
-    st.dataframe(
-        df.head(10),
-        width=True,
-        height=350
-    )
+    preview_df = df.head(10).reset_index(drop=True)
+    st.write(preview_df)
 
     if df.empty:
         st.error("❌ Uploaded dataset is empty.")
