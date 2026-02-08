@@ -28,6 +28,28 @@ st.set_page_config(
 # Sidebar
 # --------------------------------------------------
 st.sidebar.title("⚙️ Control Panel")
+
+# --------------------------------------------------
+# Download Sample Dataset
+# --------------------------------------------------
+st.sidebar.markdown("### 📥 Sample Dataset")
+
+with open("data/sample_dataset.csv", "rb") as file:
+    st.sidebar.download_button(
+        label="⬇️ Download Sample Test Dataset",
+        data=file,
+        file_name="sample_test_dataset.csv",
+        mime="text/csv"
+    )
+
+st.sidebar.markdown(
+    "<small>This dataset matches the trained model features.</small>",
+    unsafe_allow_html=True
+)
+
+# --------------------------------------------------
+# Upload Dataset
+# --------------------------------------------------
 st.sidebar.markdown("Upload dataset and select model")
 
 uploaded_file = st.sidebar.file_uploader(
