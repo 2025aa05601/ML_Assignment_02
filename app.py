@@ -66,15 +66,21 @@ model_dict = {
     "XGBoost (Ensemble)": "xgboost.pkl"
 }
 
+# --------------------------------------------------
+# Target Column Selection
+# --------------------------------------------------
+st.sidebar.markdown("### 🎯 Target Variable")
+
+target_col = st.sidebar.selectbox(
+  "Select Target Column",
+   df.columns
+)
 selected_model = st.sidebar.selectbox(
     "🧠 Choose Classification Model",
     list(model_dict.keys())
 )
 
 st.sidebar.markdown("---")
-st.sidebar.info(
-    "📌 Dataset must contain a **target** column.\n\n"
-)
 
 # --------------------------------------------------
 # Main Header
@@ -98,17 +104,7 @@ if uploaded_file:
     df = pd.read_csv(uploaded_file)
 
     st.subheader("🔍 Dataset Preview")
-    st.dataframe(df.head(), use_container_width=True)
-
-    # --------------------------------------------------
-    # Target Column Selection
-    # --------------------------------------------------
-    st.sidebar.markdown("### 🎯 Target Variable")
-
-    target_col = st.sidebar.selectbox(
-        "Select Target Column",
-        df.columns
-    )
+    st.dataframe(df.head(), width=True)
 
     X = df.drop(columns=[target_col])
     y = df[target_col]
@@ -161,7 +157,7 @@ if uploaded_file:
     st.markdown("## 📄 Detailed Classification Report")
     report = classification_report(y, y_pred, output_dict=True)
     report_df = pd.DataFrame(report).transpose()
-    st.dataframe(report_df, use_container_width=True)
+    st.dataframe(report_df, width=True)
 
 else:
     st.info(
