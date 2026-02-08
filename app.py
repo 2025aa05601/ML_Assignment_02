@@ -14,6 +14,7 @@ from sklearn.metrics import (
     confusion_matrix,
     classification_report
 )
+from sklearn.preprocessing import LabelEncoder
 
 # --------------------------------------------------
 # Page Configuration
@@ -126,7 +127,7 @@ if uploaded_file:
     run_model = st.sidebar.button("🚀 Run Model Evaluation")
 
     if not run_model:
-        st.info("👈 Select a target variable and click **Run Model Evaluation**.")
+        #st.info("👈 Select a target variable and click **Run Model Evaluation**.")
         st.sidebar.markdown("---")
         st.stop()
     st.sidebar.markdown("---")
@@ -137,7 +138,20 @@ if uploaded_file:
     X = df.drop(columns=[target_col])
     y = df[target_col]
 
+    # y is the selected target column
+    if y.dtype == "object" or y.dtype.name == "category":
+        le = LabelEncoder()
+        y_encoded = le.fit_transform(y)
+        class_mapping = dict(zip(le.classes_, le.transform(le.classes_)))
 
+        st.info(
+        f"🔁 Target labels encoded automatically:\n{class_mapping}"
+        )
+    else:
+        y_encoded = y
+
+    #re-assign the target data
+    y = y_encoded
     model_path = f"model/saved_models/{model_dict[selected_model]}"
     model = joblib.load(model_path)
 
