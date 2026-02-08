@@ -66,23 +66,12 @@ model_dict = {
     "XGBoost (Ensemble)": "xgboost.pkl"
 }
 
-# --------------------------------------------------
-# Target Column Selection
-# --------------------------------------------------
-st.sidebar.markdown("### 🎯 Target Variable")
-
-if uploaded_file:
-    df = pd.read_csv(uploaded_file)
-    target_col = st.sidebar.selectbox(
-      "Select Target Column",
-       df.columns
-    )
 selected_model = st.sidebar.selectbox(
     "🧠 Choose Classification Model",
     list(model_dict.keys())
 )
 
-st.sidebar.markdown("---")
+
 
 # --------------------------------------------------
 # Main Header
@@ -103,12 +92,42 @@ st.markdown("---")
 # Main Logic
 # --------------------------------------------------
 if uploaded_file:
+    uploaded_file.seek(0)
     df = pd.read_csv(uploaded_file)
+
     st.subheader("🔍 Dataset Preview")
     st.dataframe(df.head(), width=True)
+    
+    # --------------------------------------------------
+    # Target Column Selection
+    # --------------------------------------------------
+    st.sidebar.markdown("### 🎯 Target Variable")
+    target_col = st.sidebar.selectbox(
+        "Select Target Column",
+        options=["-- Select --"] + list(df.columns)
+    )
+    
+    # -------------------------------
+    # Guard Clause
+    # -------------------------------
+    if target_col == "-- Select --":
+        st.info("👈 Please select a target variable to continue.")
+        st.sidebar.markdown("---")
+        st.stop()
+    run_model = st.sidebar.button("🚀 Run Model Evaluation")
 
+    if not run_model:
+        st.info("👈 Select a target variable and click **Run Model Evaluation**.")
+        st.sidebar.markdown("---")
+        st.stop()
+    st.sidebar.markdown("---")
+    
+    # -------------------------------
+    # SAFE EXECUTION ZONE
+    # -------------------------------
     X = df.drop(columns=[target_col])
     y = df[target_col]
+
 
     model_path = f"model/saved_models/{model_dict[selected_model]}"
     model = joblib.load(model_path)
