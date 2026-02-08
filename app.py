@@ -100,12 +100,18 @@ if uploaded_file:
     st.subheader("🔍 Dataset Preview")
     st.dataframe(df.head(), use_container_width=True)
 
-    if "target" not in df.columns:
-        st.error("❌ Dataset must contain a 'target' column.")
-        st.stop()
+    # --------------------------------------------------
+    # Target Column Selection
+    # --------------------------------------------------
+    st.sidebar.markdown("### 🎯 Target Variable")
 
-    X = df.drop("target", axis=1)
-    y = df["target"]
+    target_col = st.sidebar.selectbox(
+        "Select Target Column",
+        df.columns
+    )
+
+    X = df.drop(columns=[target_col])
+    y = df[target_col]
 
     model_path = f"model/saved_models/{model_dict[selected_model]}"
     model = joblib.load(model_path)
