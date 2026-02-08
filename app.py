@@ -1,59 +1,157 @@
 import streamlit as st
 import pandas as pd
 import joblib
-
-from sklearn.metrics import confusion_matrix, classification_report
-import seaborn as sns
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-st.set_page_config(page_title="ML Assignment 2", layout="wide")
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+    matthews_corrcoef,
+    confusion_matrix,
+    classification_report
+)
 
-st.title("ML Classification Models – Assignment 2")
+# --------------------------------------------------
+# Page Configuration
+# --------------------------------------------------
+st.set_page_config(
+    page_title="ML Assignment 2 | Model Explorer",
+    page_icon="🤖",
+    layout="wide"
+)
+
+# --------------------------------------------------
+# Sidebar
+# --------------------------------------------------
+st.sidebar.title("⚙️ Control Panel")
+st.sidebar.markdown("Upload dataset and select model")
+
+uploaded_file = st.sidebar.file_uploader(
+    "📂 Upload Test CSV",
+    type=["csv"]
+)
 
 model_dict = {
     "Logistic Regression": "logistic.pkl",
     "Decision Tree": "decision_tree.pkl",
-    "KNN": "knn.pkl",
+    "K-Nearest Neighbors": "knn.pkl",
     "Naive Bayes": "naive_bayes.pkl",
-    "Random Forest": "random_forest.pkl",
-    "XGBoost": "xgboost.pkl"
+    "Random Forest (Ensemble)": "random_forest.pkl",
+    "XGBoost (Ensemble)": "xgboost.pkl"
 }
 
-uploaded_file = st.file_uploader(
-    "Upload CSV Test Dataset",
-    type=["csv"]
-)
-
-selected_model = st.selectbox(
-    "Select Model",
+selected_model = st.sidebar.selectbox(
+    "🧠 Choose Classification Model",
     list(model_dict.keys())
 )
 
+st.sidebar.markdown("---")
+st.sidebar.info(
+    "📌 Dataset must contain a **target** column.\n\n"
+    "Upload only **test data** as per assignment instructions."
+)
+
+# --------------------------------------------------
+# Main Header
+# --------------------------------------------------
+st.markdown(
+    """
+    <h1 style='text-align: center;'>📊 ML Classification Model Explorer</h1>
+    <p style='text-align: center; color: grey;'>
+    Assignment 2 – End-to-End ML Deployment using Streamlit
+    </p>
+    """,
+    unsafe_allow_html=True
+)
+
+st.markdown("---")
+
+# --------------------------------------------------
+# Main Logic
+# --------------------------------------------------
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
+
+    st.subheader("🔍 Dataset Preview")
+    st.dataframe(df.head(), use_container_width=True)
+
+    if "target" not in df.columns:
+        st.error("❌ Dataset must contain a 'target' column.")
+        st.stop()
 
     X = df.drop("target", axis=1)
     y = df["target"]
 
-    model = joblib.load(f"model/saved_models/{model_dict[selected_model]}")
+    model_path = f"model/saved_models/{model_dict[selected_model]}"
+    model = joblib.load(model_path)
 
     y_pred = model.predict(X)
     y_prob = model.predict_proba(X)[:, 1]
 
-    st.subheader("Evaluation Metrics")
+    # --------------------------------------------------
+    # Metrics
+    # --------------------------------------------------
+    st.markdown("## 📈 Model Performance Metrics")
 
     col1, col2, col3 = st.columns(3)
-    col1.metric("Accuracy", round((y_pred == y).mean(), 3))
-    col2.metric("Precision", round(classification_report(y, y_pred, output_dict=True)["1"]["precision"], 3))
-    col3.metric("Recall", round(classification_report(y, y_pred, output_dict=True)["1"]["recall"], 3))
+    col1.metric("✅ Accuracy", f"{accuracy_score(y, y_pred):.3f}")
+    col2.metric("🎯 Precision", f"{precision_score(y, y_pred):.3f}")
+    col3.metric("🔁 Recall", f"{recall_score(y, y_pred):.3f}")
 
-    st.subheader("Confusion Matrix")
+    col4, col5, col6 = st.columns(3)
+    col4.metric("📊 F1 Score", f"{f1_score(y, y_pred):.3f}")
+    col5.metric("📈 AUC", f"{roc_auc_score(y, y_prob):.3f}")
+    col6.metric("🧮 MCC", f"{matthews_corrcoef(y, y_pred):.3f}")
+
+    st.markdown("---")
+
+    # --------------------------------------------------
+    # Confusion Matrix
+    # --------------------------------------------------
+    st.markdown("## 🧩 Confusion Matrix")
 
     cm = confusion_matrix(y, y_pred)
-    fig, ax = plt.subplots()
-    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", ax=ax)
+    fig, ax = plt.subplots(figsize=(4, 3))
+    sns.heatmap(
+        cm,
+        annot=True,
+        fmt="d",
+        cmap="Blues",
+        cbar=False,
+        ax=ax
+    )
+    ax.set_xlabel("Predicted Label")
+    ax.set_ylabel("True Label")
     st.pyplot(fig)
 
-    st.subheader("📄 Classification Report")
-    st.text(classification_report(y, y_pred))
+    # --------------------------------------------------
+    # Classification Report
+    # --------------------------------------------------
+    st.markdown("## 📄 Detailed Classification Report")
+    report = classification_report(y, y_pred, output_dict=True)
+    report_df = pd.DataFrame(report).transpose()
+    st.dataframe(report_df, use_container_width=True)
 
+else:
+    st.info(
+        "👈 Upload a test dataset from the sidebar to begin.\n\n"
+        "This app demonstrates multiple ML classification models "
+        "as part of Assignment-2."
+    )
+
+# --------------------------------------------------
+# Footer
+# --------------------------------------------------
+st.markdown(
+    """
+    <hr>
+    <p style='text-align:center; color: grey;'>
+    Built with ❤️ using Streamlit | ML Assignment 2
+    </p>
+    """,
+    unsafe_allow_html=True
+)
