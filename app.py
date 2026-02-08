@@ -226,8 +226,10 @@ if uploaded_file:
     # --------------------------------------------------
     st.markdown("## 📄 Detailed Classification Report")
     report = classification_report(y, y_pred, output_dict=True)
-    report_df = pd.DataFrame(report).transpose()
+    report_df = pd.DataFrame(report).transpose().round(3)
+    report_df.index = report_df.index.astype(str)
     st.dataframe(report_df, width=True)
+    st.write(report_df)
 
 else:
     st.info(
