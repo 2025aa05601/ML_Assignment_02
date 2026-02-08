@@ -19,7 +19,7 @@ from sklearn.metrics import (
 # Page Configuration
 # --------------------------------------------------
 st.set_page_config(
-    page_title="ML Assignment 2 | Model Explorer",
+    page_title="ML Classification Model Explorer",
     page_icon="🤖",
     layout="wide"
 )
@@ -52,7 +52,6 @@ selected_model = st.sidebar.selectbox(
 st.sidebar.markdown("---")
 st.sidebar.info(
     "📌 Dataset must contain a **target** column.\n\n"
-    "Upload only **test data** as per assignment instructions."
 )
 
 # --------------------------------------------------
@@ -62,7 +61,7 @@ st.markdown(
     """
     <h1 style='text-align: center;'>📊 ML Classification Model Explorer</h1>
     <p style='text-align: center; color: grey;'>
-    Assignment 2 – End-to-End ML Deployment using Streamlit
+    End-to-End ML Deployment using Streamlit
     </p>
     """,
     unsafe_allow_html=True
@@ -140,7 +139,6 @@ else:
     st.info(
         "👈 Upload a test dataset from the sidebar to begin.\n\n"
         "This app demonstrates multiple ML classification models "
-        "as part of Assignment-2."
     )
 
 # --------------------------------------------------
@@ -150,7 +148,7 @@ st.markdown(
     """
     <hr>
     <p style='text-align:center; color: grey;'>
-    Built with ❤️ using Streamlit | ML Assignment 2
+    Built with ❤️ using Streamlit 
     </p>
     """,
     unsafe_allow_html=True
