@@ -4,7 +4,7 @@ import sklearn
 import xgboost
 
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -13,11 +13,49 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 
+
 # Load dataset
 df = pd.read_csv("data/sample_dataset.csv")
 
-X = df.drop("target", axis=1)
-y = df["target"]
+X = df.drop("diagnosis", axis=1)
+y = df["diagnosis"]
+
+# -------------------------------
+# Missing data elements
+# --------------------------------
+
+threshold = 0.30
+
+missing_stats = pd.DataFrame({
+    "Feature": df.columns,
+    "Missing Count": df.isna().sum(),
+    "Missing (%)": (df.isna().mean() * 100).round(2)
+})
+
+features_to_drop = missing_stats[
+  missing_stats["Missing (%)"] > (threshold * 100)
+ ]["Feature"].tolist()
+
+if features_to_drop:
+    df = df.drop(columns=features_to_drop)
+        
+# -------------------------------
+# SAFE EXECUTION ZONE
+# -------------------------------
+X = df.drop(columns=['diagnosis'])
+y = df['diagnosis']
+
+# y is the selected target column
+if y.dtype == "object" or y.dtype.name == "category":
+    le = LabelEncoder()
+    y_encoded = le.fit_transform(y)
+    class_mapping = dict(zip(le.classes_, le.transform(le.classes_)))
+
+else:
+    y_encoded = y
+
+#re-assign the target data
+y = y_encoded
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y

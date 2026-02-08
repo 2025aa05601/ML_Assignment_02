@@ -133,6 +133,33 @@ if uploaded_file:
     st.sidebar.markdown("---")
     
     # -------------------------------
+    # Missing data elements
+    # --------------------------------
+
+    threshold = 0.30
+
+    missing_stats = pd.DataFrame({
+        "Feature": df.columns,
+        "Missing Count": df.isna().sum(),
+        "Missing (%)": (df.isna().mean() * 100).round(2)
+    })
+
+    features_to_drop = missing_stats[
+     missing_stats["Missing (%)"] > (threshold * 100)
+    ]["Feature"].tolist()
+
+    st.dataframe(missing_stats, use_container_width=True)
+
+    if features_to_drop:
+        st.warning(
+            f"⚠️ Features dropped due to >30% missing values:\n"
+            f"{features_to_drop}"
+        )
+        df = df.drop(columns=features_to_drop)
+    else:
+        st.success("✅ No features exceed the missing value threshold.")
+        
+    # -------------------------------
     # SAFE EXECUTION ZONE
     # -------------------------------
     X = df.drop(columns=[target_col])
