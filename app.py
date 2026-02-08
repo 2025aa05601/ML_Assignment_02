@@ -96,7 +96,19 @@ if uploaded_file:
     df = pd.read_csv(uploaded_file)
 
     st.subheader("🔍 Dataset Preview")
-    st.dataframe(df.head(), width=True)
+    st.markdown(
+        f"**Shape:** {df.shape[0]} rows × {df.shape[1]} columns"
+        )
+    st.dataframe(
+        df.head(10),
+        width=True,
+        height=350
+    )
+
+    if df.empty:
+        st.error("❌ Uploaded dataset is empty.")
+        st.sidebar.markdown("---")
+        st.stop()
     
     # --------------------------------------------------
     # Target Column Selection
