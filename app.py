@@ -20,7 +20,7 @@ from sklearn.preprocessing import LabelEncoder
 # Page Configuration
 # --------------------------------------------------
 st.set_page_config(
-    page_title="ML Classification Model Explorer",
+    page_title="ML Classification Model for Breast Cancer Wisconsin (Diagnostic)",
     page_icon="🤖",
     layout="wide"
 )
@@ -77,15 +77,19 @@ selected_model = st.sidebar.selectbox(
 # --------------------------------------------------
 # Main Header
 # --------------------------------------------------
-st.markdown(
-    """
-    <h1 style='text-align: center;'>📊 ML Classification Model Explorer</h1>
-    <p style='text-align: center; color: grey;'>
-    End-to-End ML Deployment using Streamlit
+st.markdown("""
+<div style="text-align: center; padding: 1.5rem 0;">
+    <h1 style="margin-bottom: 0.3rem;">
+        📊 ML Classification Model Explorer
+    </h1>
+    <h3 style="margin-top: 0; font-weight: 400;">
+        Breast Cancer Wisconsin (Diagnostic)
+    </h3>
+    <p style="color: grey; margin-top: 0.5rem;">
+        End-to-End ML Deployment using Streamlit
     </p>
-    """,
-    unsafe_allow_html=True
-)
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -111,19 +115,18 @@ if uploaded_file:
     # --------------------------------------------------
     # Target Column Selection
     # --------------------------------------------------
-    st.sidebar.markdown("### 🎯 Target Variable")
-    target_col = st.sidebar.selectbox(
-        "Select Target Column",
-        options=["-- Select --"] + list(df.columns)
-    )
-    
+    #st.sidebar.markdown("### 🎯 Target Variable")
+    #target_col = st.sidebar.selectbox(
+        #"Select Target Column",
+        #options=["-- Select --"] + list(df.columns))
+    target_col = 'diagnosis'
     # -------------------------------
     # Guard Clause
     # -------------------------------
-    if target_col == "-- Select --":
-        st.info("👈 Please select a target variable to continue.")
-        st.sidebar.markdown("---")
-        st.stop()
+    #if target_col == "-- Select --":
+        #st.info("👈 Please select a target variable to continue.")
+        #st.sidebar.markdown("---")
+        #st.stop()
     run_model = st.sidebar.button("🚀 Run Model Evaluation")
 
     if not run_model:
@@ -135,7 +138,7 @@ if uploaded_file:
     # -------------------------------
     # Missing data elements
     # --------------------------------
-
+    st.markdown("## 🧪 Missing Values Check")
     threshold = 0.30
 
     missing_stats = pd.DataFrame({
