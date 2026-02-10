@@ -111,30 +111,7 @@ if uploaded_file:
         st.error("❌ Uploaded dataset is empty.")
         st.sidebar.markdown("---")
         st.stop()
-    
-    # --------------------------------------------------
-    # Target Column Selection
-    # --------------------------------------------------
-    #st.sidebar.markdown("### 🎯 Target Variable")
-    #target_col = st.sidebar.selectbox(
-        #"Select Target Column",
-        #options=["-- Select --"] + list(df.columns))
-    target_col = 'diagnosis'
-    # -------------------------------
-    # Guard Clause
-    # -------------------------------
-    #if target_col == "-- Select --":
-        #st.info("👈 Please select a target variable to continue.")
-        #st.sidebar.markdown("---")
-        #st.stop()
-    run_model = st.sidebar.button("🚀 Run Model Evaluation")
 
-    if not run_model:
-        #st.info("👈 Select a target variable and click **Run Model Evaluation**.")
-        st.sidebar.markdown("---")
-        st.stop()
-    st.sidebar.markdown("---")
-    
     # -------------------------------
     # Missing data elements
     # --------------------------------
@@ -161,7 +138,30 @@ if uploaded_file:
         df = df.drop(columns=features_to_drop)
     else:
         st.success("✅ No features exceed the missing value threshold.")
-        
+   
+    # --------------------------------------------------
+    # Target Column Selection
+    # --------------------------------------------------
+    #st.sidebar.markdown("### 🎯 Target Variable")
+    #target_col = st.sidebar.selectbox(
+        #"Select Target Column",
+        #options=["-- Select --"] + list(df.columns))
+    target_col = 'diagnosis'
+    # -------------------------------
+    # Guard Clause
+    # -------------------------------
+    #if target_col == "-- Select --":
+        #st.info("👈 Please select a target variable to continue.")
+        #st.sidebar.markdown("---")
+        #st.stop()
+    run_model = st.sidebar.button("🚀 Run Model Evaluation")
+
+    if not run_model:
+        #st.info("👈 Select a target variable and click **Run Model Evaluation**.")
+        st.sidebar.markdown("---")
+        st.stop()
+    st.sidebar.markdown("---")
+   
     # -------------------------------
     # SAFE EXECUTION ZONE
     # -------------------------------
