@@ -193,14 +193,12 @@ if uploaded_file:
     # --------------------------------------------------
     st.markdown("## 📈 Model Performance Metrics")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4, col5, col6 = st.columns(6)
     col1.metric("✅ Accuracy", f"{accuracy_score(y, y_pred):.3f}")
-    col2.metric("🎯 Precision", f"{precision_score(y, y_pred):.3f}")
-    col3.metric("🔁 Recall", f"{recall_score(y, y_pred):.3f}")
-
-    col4, col5, col6 = st.columns(3)
-    col4.metric("📊 F1 Score", f"{f1_score(y, y_pred):.3f}")
-    col5.metric("📈 AUC", f"{roc_auc_score(y, y_prob):.3f}")
+    col2.metric("📈 AUC", f"{roc_auc_score(y, y_prob):.3f}")
+    col3.metric("🎯 Precision", f"{precision_score(y, y_pred):.3f}")
+    col4.metric("🔁 Recall", f"{recall_score(y, y_pred):.3f}")
+    col5.metric("📊 F1 Score", f"{f1_score(y, y_pred):.3f}")
     col6.metric("🧮 MCC", f"{matthews_corrcoef(y, y_pred):.3f}")
 
     st.markdown("---")
