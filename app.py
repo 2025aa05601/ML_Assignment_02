@@ -3,6 +3,7 @@ import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 
 from sklearn.metrics import (
     accuracy_score,
@@ -58,6 +59,15 @@ uploaded_file = st.sidebar.file_uploader(
     type=["csv"]
 )
 
+# ---------------------------------------------------
+# Setup Model Directory 
+# ---------------------------------------------------
+MODEL_DIR = "model/saved_models"
+
+if not os.path.exists(MODEL_DIR):
+    st.error("❌ Model directory not found. Run training script first.")
+    st.stop()
+
 model_dict = {
     "Logistic Regression": "logistic.pkl",
     "Decision Tree": "decision_tree.pkl",
@@ -72,6 +82,8 @@ selected_model = st.sidebar.selectbox(
     list(model_dict.keys())
 )
 
+model_path = f"model/saved_models/{model_dict[selected_model]}"
+model = joblib.load(model_path)
 
 
 # --------------------------------------------------
@@ -128,7 +140,7 @@ if uploaded_file:
      missing_stats["Missing (%)"] > (threshold * 100)
     ]["Feature"].tolist()
 
-    st.dataframe(missing_stats, use_container_width=True)
+    st.dataframe(missing_stats, width="stretch")
 
     if features_to_drop:
         st.warning(
@@ -139,21 +151,9 @@ if uploaded_file:
     else:
         st.success("✅ No features exceed the missing value threshold.")
    
-    # --------------------------------------------------
-    # Target Column Selection
-    # --------------------------------------------------
-    #st.sidebar.markdown("### 🎯 Target Variable")
-    #target_col = st.sidebar.selectbox(
-        #"Select Target Column",
-        #options=["-- Select --"] + list(df.columns))
+
     target_col = 'diagnosis'
-    # -------------------------------
-    # Guard Clause
-    # -------------------------------
-    #if target_col == "-- Select --":
-        #st.info("👈 Please select a target variable to continue.")
-        #st.sidebar.markdown("---")
-        #st.stop()
+
     run_model = st.sidebar.button("🚀 Run Model Evaluation")
 
     if not run_model:
